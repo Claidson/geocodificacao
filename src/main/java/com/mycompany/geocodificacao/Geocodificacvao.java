@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import net.sf.json.JSONObject;
+
 /**
  *
  * @author Aluno
@@ -63,7 +64,6 @@ public class Geocodificacvao {
         return builder.toString();
     }
 
-
     public void lerCSV() {
 
         String arquivoCSV = "CSVData.csv";
@@ -89,18 +89,24 @@ public class Geocodificacvao {
                 System.out.println("endereço: " + end.endereco);
                 // enderecos
                 System.out.println("-------------------------------------------");
-          
-                try {
-                    String URLConsulta = end.nome + "," + end.endereco + "&format=json";
-                    String url = URLEncoder.encode(URLConsulta, "UTF-8");
-                    System.out.println(url);
-                    String retorno = buscaURL(URL_API + url);
 
+                try {
+                    String URLConsulta = end.nome + "," + end.endereco;
+                    String url = URLEncoder.encode(URLConsulta, "UTF-8");
+                    System.out.println("URL: " + URL_API + url + "&format=json");
+
+                    String retorno = buscaURL(URL_API + url + "&format=json");
+                    String objetoRetornado = retorno.replace("[", "");
                     System.out.println("resposta" + retorno);
-                     JSONObject objetoJson = JSONObject.fromObject(retorno);
-                     String latitude =  (String) objetoJson.get("lat");
-                     String longitude =  (String) objetoJson.get("lon");
-                     System.out.println("Cordenadas: "+latitude+": "+longitude);
+                    System.out.println("Retornado "+ objetoRetornado);
+                    if (retorno.equals("[]")) {
+                        System.out.println("Nao achou as cordenadas");
+                    } else {
+                        JSONObject objetoJson = JSONObject.fromObject(objetoRetornado);
+                        String latitude = (String) objetoJson.get("lat");
+                        String longitude = (String) objetoJson.get("lon");
+                        System.out.println("Cordenadas: " + latitude + ": " + longitude);
+                    }
 
                 } catch (Exception e) {
                     System.out.println("Deu ruim");
